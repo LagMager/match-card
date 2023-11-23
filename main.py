@@ -62,10 +62,13 @@ def dibujar_cartas():
     board_list = []
     for i in range(columnas):
         for j in range(filas):
-            carta = pygame.draw.rect(screen, white, [i * 75 + 12, j * 65 + 112, 50, 50], 0, 4)
+            pos = pygame.math.Vector2(i * 75 + 12, j * 65 + 112)
+            size = pygame.math.Vector2(50, 50)
+            carta = pygame.draw.rect(screen, white, (*pos, *size), 0, 4)
             board_list.append(carta)
             piece_text = small_font.render(f'{espacios[i * filas + j]}', True, gray)
-            screen.blit(piece_text, (i * 75 + 20, j * 65 + 120))
+            piece_text_pos = pos + pygame.math.Vector2(12,8)
+            screen.blit(piece_text, piece_text_pos)
     return board_list
 
 
@@ -109,15 +112,4 @@ while running:
 
     pygame.display.flip()
 
-pygame.quit()
-if sel_1 and sel_2:
-    if espacios[carta_1] == espacios[carta_2]:
-        print("Match!")
-    else:
-        print("No match!")
-    sel_1 = False
-    sel_2 = False
-
-
-    pygame.display.flip()
 pygame.quit()
