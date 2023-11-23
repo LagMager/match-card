@@ -26,6 +26,10 @@ opciones = []
 espacios = []
 cartas_usadas = []
 
+#Escondemos los valores antes de iniciar el juego
+mostrar_cartas = [[False] * filas for _ in range(columnas)]
+
+
 #Logica
 screen = pygame.display.set_mode((ANCHO, ALTO), pygame.RESIZABLE)
 pygame.display.set_caption("Match Card")
@@ -66,9 +70,11 @@ def dibujar_cartas():
             size = pygame.math.Vector2(50, 50)
             carta = pygame.draw.rect(screen, white, (*pos, *size), 0, 4)
             board_list.append(carta)
-            piece_text = small_font.render(f'{espacios[i * filas + j]}', True, gray)
-            piece_text_pos = pos + pygame.math.Vector2(12,8)
-            screen.blit(piece_text, piece_text_pos)
+            if mostrar_cartas[i][j]:
+                piece_text = small_font.render(f'{espacios[i * columnas + j]}', True, gray)
+                text_pos = [pos[0] + 20, pos[1] + 8]  # Adjusted position for rendering text
+                screen.blit(piece_text, text_pos)
+
     return board_list
 
 
@@ -95,10 +101,12 @@ while running:
                 if carta.collidepoint(event.pos) and not sel_1:
                     sel_1 = True
                     carta_1 = i
+                    mostrar_cartas[carta_1 % columnas][carta_1 // filas] = True
                     print(f'Se seleccionó la carta {espacios[carta_1]}')
                 elif carta.collidepoint(event.pos) and sel_1 and not sel_2 and i != carta_1:
                     sel_2 = True
                     carta_2 = i
+                    mostrar_cartas[carta_2 % columnas][carta_2 // filas] = True
                     print(f'Se seleccionó la carta {espacios[carta_2]}')
 
     if sel_1 and sel_2:
