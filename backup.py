@@ -57,6 +57,7 @@ carta_1, carta_2 = 0, 0
 sel_1, sel_2 = False, False
 pares = 0
 game_over = False
+in_delay = False
 #Listas
 opciones, espacios, cartas_usadas = [], [], []
 cartas_correctas = []
@@ -188,7 +189,7 @@ def handle_difficulty_state(events):
     DifBotonesUpdater.update(events=events, mouse_rel=mouse_rel)
 
 def handle_game_state(events):
-    global tablero_nuevo, sel_1, sel_2, carta_1, carta_2, cartas_correctas, running, game_over, sel_rect_start_time, carta_arriba
+    global tablero_nuevo, sel_1, sel_2, carta_1, carta_2, cartas_correctas, running, game_over, sel_rect_start_time, carta_arriba, in_delay
     if tablero_nuevo:
         generar_tablero()
         tablero_nuevo = False
@@ -198,7 +199,7 @@ def handle_game_state(events):
     for event in events:
         if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN and not in_delay:
             for i in range(len(tablero)):
                 pos, card_image = tablero[i]
                 rect = pygame.Rect(pos, card_image.get_size())
@@ -224,6 +225,7 @@ def handle_game_state(events):
 
     if sel_1 and sel_2:
         current_time = pygame.time.get_ticks()
+        in_delay = True
         if current_time - sel_rect_start_time < 2000:
             pos, card_image = tablero[carta_1]
             sel_rect_1 = pygame.Rect((pos[0] + 8, pos[1]), (50 - 2, 50 + 14))
@@ -234,6 +236,7 @@ def handle_game_state(events):
             pygame.draw.rect(screen, BLUE, sel_rect_2, 3)
 
         else:
+            in_delay = False
             revisar_cartas(carta_1, carta_2)
             sel_1 = False
             sel_2 = False
