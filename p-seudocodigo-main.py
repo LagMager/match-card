@@ -3,7 +3,7 @@ Nombres: Maycol Andres Taquez
          Andres Perea
          Sebastian 
 
-Correo: maycol.taquez@correounivalle.edu.co
+Correo: maycol.taquez@correounivalle.edu.co, andres.fernando.perea@correounivalle.edu.co, sebastian.quintero.ramirez@correounivalle.edu.co
 
 Paso 1: Analisis del problema
 Descripción:
@@ -208,14 +208,14 @@ handle_game_state(events):
         Si tipo de evento = MOUSEBUTTONDOWN
             Para i rango(longitud(tablero))
                 carta = tablero[i]
-                Si carta colisiona con (event.pos) y no sel_1
+                Si carta1_presionada y no seleccionada:
                     sel_1 = Verdadero
                     carta_1 = i
-                    mostrar("Se seleccionó la carta", espacios[carta_1])
+                    mostrar_carta()
                 Sino Si carta colisiona con (event.pos) y sel_1 y no sel_2 y i no es igual a carta_1
                     sel_2 = Verdadero
                     carta_2 = i
-                    mostrar("Se seleccionó la carta", espacios[carta_2])
+                    mostrar_carta()
                 Fin Si
             Fin Para
         Fin Si

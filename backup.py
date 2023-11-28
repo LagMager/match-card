@@ -8,15 +8,23 @@ BLACK, RED, WHITE, GRAY, GREEN, BLUE = (0,0,0), (255,0,0), (255,255,255), (169,1
 ANCHO, ALTO = 600, 600
 columnas, filas = 6, 6
 puntaje = 0
+best_score = 0
 sel_rect_start_time = 0
 
 images_folder = "Cards"
-image_files = [f for f in os.listdir(images_folder) if f.endswith(".png")]
-images = [pygame.image.load(os.path.join(images_folder, img)) for img in image_files]
+images_folder_set2 = "uno"
+
+image_files_set1 = [f for f in os.listdir(images_folder) if f.endswith(".png")]
+image_files_set2 = [f for f in os.listdir(images_folder_set2) if f.endswith(".png")]
+
+images_set1 = [pygame.image.load(os.path.join(images_folder, img)) for img in image_files_set1]
+images_set2 = [pygame.image.load(os.path.join(images_folder_set2, img)) for img in image_files_set2]
 
 card_back_image = pygame.image.load("card_back.png")
 
-paired_images = images * 2
+selected_images = random.choice([images_set1, images_set2])
+
+paired_images = selected_images * 2
 random.shuffle(paired_images)
 
 #Inicializando Pygame
@@ -77,8 +85,8 @@ def change_game_state(game_state_value):
         game_state = "game"
 
 def reset_game():
-    global opciones, espacios, cartas_usadas, cartas_correctas, tablero_nuevo, sel_1, sel_2, pares, game_over
-
+    global opciones, espacios, cartas_usadas, cartas_correctas, tablero_nuevo, sel_1, sel_2, pares, game_over, puntaje
+    global selected_images, images_set1, images_set2, paired_images
     opciones, espacios, cartas_usadas = [], [], []
     cartas_correctas = []
     tablero_nuevo = True
@@ -86,6 +94,10 @@ def reset_game():
     sel_2 = False
     pares = 0
     game_over = False
+    puntaje = 0
+    selected_images = random.choice([images_set1, images_set2])
+    paired_images = selected_images * 2
+    random.shuffle(paired_images)
     change_game_state(0)
 def before_gui():
     screen.fill(WHITE)
@@ -120,10 +132,14 @@ def generar_tablero():
     global paired_images
     paired_images = {}
     for i, value in enumerate(espacios):
-        paired_images[value] = images[i % len(images)] 
+        paired_images[value] = selected_images[i % len(selected_images)] 
 
 def dibujar_bg():
     tablero = pygame.draw.rect(screen, GRAY, [0,0, ANCHO, ALTO], 0)
+    score_text = small_font.render(f'Turnos: {puntaje}', True, WHITE)
+    screen.blit(score_text, (120, 15))
+    best_text = small_font.render(f'Mejor intento: {best_score}', True, WHITE)
+    screen.blit(best_text, (300, 15))
 def dibujar_cartas():
     global filas, columnas, paired_images, sel_1, sel_2, carta_arriba
     board_list = []
@@ -189,7 +205,7 @@ def handle_difficulty_state(events):
     DifBotonesUpdater.update(events=events, mouse_rel=mouse_rel)
 
 def handle_game_state(events):
-    global tablero_nuevo, sel_1, sel_2, carta_1, carta_2, cartas_correctas, running, game_over, sel_rect_start_time, carta_arriba, in_delay
+    global tablero_nuevo, sel_1, sel_2, carta_1, carta_2, cartas_correctas, running, game_over, sel_rect_start_time, carta_arriba, in_delay, puntaje, best_score
     if tablero_nuevo:
         generar_tablero()
         tablero_nuevo = False
@@ -256,6 +272,9 @@ def handle_game_state(events):
         winner = pygame.draw.rect(screen, BLACK, [10, ALTO - 300,ANCHO - 20, 80], 0, 5)
         winner_text = small_font.render(f"Ganaste en {puntaje} movimientos", True, WHITE)
         screen.blit(winner_text, (120,ALTO - 280))
+        if best_score < puntaje or best_score == 0:
+            best_score = puntaje
+
 
 
 # Eventos botones
